@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Overview
 
 The "gql" sample app is a GraphQL service that demonstrates the use of a code-generator to 
@@ -106,3 +107,7 @@ Main folder name is "gql".  Subfolders/files:
 
 
 
+=======
+# generate_node_graphql
+A code generator that creates a Node.js service using Apollo, to convert a schema json config file into a fully functioning GraphQL service with database resolvers.
+>>>>>>> 97b4b42915b84ffa8efcc7ee17034b870674f74c
