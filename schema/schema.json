@@ -1,0 +1,41 @@
+{
+	"entities": [
+		{
+			"name": "contributor",
+			"class": "Contributor",
+			"pkey": "id",
+			"fields": [
+				{ "name": "name", "type": "String", "isNull": false },
+				{ "name": "url", "type": "String", "isNull": true },
+				{ "name": "major", "type": "String", "isNull": true }
+			]
+		},
+		{
+			"name": "article",
+			"class": "Article",
+			"pkey": "id",
+			"fields": [
+				{ "name": "name", "type": "String", "isNull": false },
+				{ "name": "topic", "type": "String", "isNull": false },
+				{ "name": "date", "type": "String", "isNull": false },
+				{ "name": "contributorId", "type": "String", "isNull": false }
+			]
+		}
+	],
+	"relations": [
+		{
+			"name": "contributorArticles",
+			"originatingCardinality": "1",
+			"originatingEntity": "contributor",
+			"originatingClass": "Contributor",
+			"originatingField": "contributor",
+			"originatingKey": "id",
+			"finalCardinality": "M",
+			"finalEntity": "article",
+			"finalClass": "Article",
+			"finalField": "articles",
+			"finalKey": "contributorId"
+		}
+
+	]
+}
