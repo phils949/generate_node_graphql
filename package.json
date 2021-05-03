@@ -7,13 +7,13 @@
     "test": "npm start"
   },
   "dependencies": {
+    "aws-sdk": "^2.855.0",
+    "dotenv": "^8.2.0",
     "express": "latest",
-    "graphql": "latest",
     "express-graphql": "latest",
+    "graphql": "latest",
     "lodash": "latest",
-    "dotenv": "latest",
-    "mongoose": "latest",
-    "aws-sdk": "^2.855.0"
+    "mongoose": "latest"
   },
   "author": "phil scott",
   "license": "ISC"

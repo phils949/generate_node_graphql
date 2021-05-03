@@ -1,0 +1,14 @@
+{
+	"Items": [
+		{ "id": "484", "code": "MX", "geoWorldRegionID": "1", "title": "Mexico" },
+		{ "id": "170", "code": "CO", "geoWorldRegionID": "4", "title": "Columbia" },
+		{ "id": "192", "code": "CU", "geoWorldRegionID": "4", "title": "Cuba" },
+		{ "id": "152", "code": "CL", "geoWorldRegionID": "4", "title": "Chile" },
+		{ "id": "004", "code": "AF", "geoWorldRegionID": "3", "title": "Afganistan" },
+		{ "id": "826", "code": "GB", "geoWorldRegionID": "5", "title": "United Kingdom" },
+		{ "id": "188", "code": "CR", "geoWorldRegionID": "4", "title": "Costa Rica" },
+		{ "id": "124", "code": "CA", "geoWorldRegionID": "1", "title": "Canada" },
+		{ "id": "840", "code": "US", "geoWorldRegionID": "1", "title": "United States of America" }
+
+	]
+}

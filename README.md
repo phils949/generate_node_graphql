@@ -106,10 +106,10 @@ To run the MongoDB backed service, the "index.js" file is the main server, which
 		or
 	node index.js
 
-To run the AWS DynamoDB backed service, the "index_ddb.js" file is the main server, which can be run by typing:
-	nodemon index_ddb.js
+To run the AWS DynamoDB backed service, the "index_dynamo.js" file is the main server, which can be run by typing:
+	nodemon index_dynamo.js
 		or
-	node index_ddb.js
+	node index_dynamo.js
 
 In my environment, my app is running in a docker instance that binds the GraphQL service to
 port number 5000. But, the docker container is running nginx reverse proxy that maps
@@ -143,7 +143,7 @@ Main folder name is "gql".  Subfolders/files:
 		gen_data.js
 		gen_dynamo.js
 		index.js
-		index_ddb.js
+		index_dynamo.js
 		package-lock.json
 		package.json
 		models/

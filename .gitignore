@@ -114,6 +114,9 @@ dist
 package-lock.json
 
 
+sav/*
+*.tar
+*.tgz
 schema/*.js
 models/*.js
     .README.md.swp

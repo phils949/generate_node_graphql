@@ -1,29 +1,104 @@
 {
 	"entities": [
 		{
+			"domain": "common",
 			"name": "geoCountry",
 			"class": "GeoCountry",
 			"table": "GeoCountry",
 			"pkey": "id",
+			"sortkey": "code",
 			"fields": [
 				{ "name": "id", "type": "String", "isNull": false },
 				{ "name": "code", "type": "String", "isNull": false },
 				{ "name": "defaultGeoLanguageID", "type": "String", "isNull": true },
 				{ "name": "geoWorldRegionID", "type": "String", "isNull": true },
 				{ "name": "title", "type": "String", "isNull": false }
-			]
+			],
+			"indexes": [
+				{ "name": "GeoCountryByCode", "type": "GSI", "pkey": "code", "scope": "all" },
+				{ "name": "GeoCountryByGeoWorldRegion", "type": "GSI", "pkey": "geoWorldRegionID", "sortkey": "title", "scope": "all" }
+			],
+			"seedFile": "GeoCountry.data.json"
 		},
 		{
+			"domain": "common",
 			"name": "geoWorldRegion",
 			"class": "GeoWorldRegion",
 			"table": "geoWorldRegionTable",
 			"pkey": "id",
+			"sortkey": "code",
 			"fields": [
 				{ "name": "id", "type": "String", "isNull": false },
 				{ "name": "code", "type": "String", "isNull": false },
 				{ "name": "title", "type": "String", "isNull": false }
+			],
+			"indexes": [
+				{ "name": "GeoWorldRegionByCode", "type": "GSI", "pkey": "code", "scope": "all" }
+			],
+			"seedFile": "GeoWorldRegion.data.json"
+		},
+		{
+			"domain": "appGeneral",
+			"name": "contact",
+			"class": "Contact",
+			"table": "PenContact",
+			"pkey": "ownerID",
+			"sortkey": "id",
+			"fields": [
+				{ "name": "ownerID", "type": "String", "isNull": false },
+				{ "name": "id", "type": "String", "isNull": false },
+				{ "name": "firstName", "type": "String", "isNull": false },
+				{ "name": "middleName", "type": "String", "isNull": true },
+				{ "name": "lastName", "type": "String", "isNull": true },
+				{ "name": "displayName", "type": "String", "isNull": true },
+				{ "name": "pronouns", "type": "String", "isNull": true },
+				{ "name": "preferredGeoLanguageID", "type": "String", "isNull": true },
+				{ "name": "geoCountryID", "type": "String", "isNull": true }
+			],
+			"indexes": [
+				{ "name": "ContactByLastName", "type": "GSI", "pkey": "ownerID", "sortkey": "lastName", "scope": "all" },
+				{ "name": "ContactByPreferredGeoLanguageID", "type": "GSI", "pkey": "ownerID", "sortkey": "preferredGeoLanguageID", "scope": "all" },
+				{ "name": "ContactByGeoCountry", "type": "GSI", "pkey": "ownerID", "sortkey": "geoCountryID", "scope": "all" }
+			]
+		},
+		{
+			"domain": "appGeneral",
+			"name": "contactRelation",
+			"class": "ContactRelation",
+			"table": "PenContactRelation",
+			"pkey": "ownerID",
+			"sortkey": "id",
+			"fields": [
+				{ "name": "ownerID", "type": "String", "isNull": false },
+				{ "name": "id", "type": "String", "isNull": false },
+				{ "name": "srcContactID", "type": "String", "isNull": false},
+				{ "name": "dstContactID", "type": "String", "isNull": false},
+				{ "name": "relationTypeID", "type": "String", "isNull": false },
+				{ "name": "customType", "type": "String", "isNull": true },
+				{ "name": "tags", "type": "String", "isNull": true },
+				{ "name": "notes", "type": "String", "isNull": true }
+			],
+			"indexes": [
+				{ "name": "ContactRelationBySource", "type": "GSI", "pkey": "ownerID", "sortkey": "srcContactID", "scope": "all" },
+				{ "name": "ContactRelationByDestination", "type": "GSI", "pkey": "ownerID", "sortkey": "dstContactID", "scope": "all" },
+				{ "name": "ContactRelationByRelationType", "type": "GSI", "pkey": "ownerID", "sortkey": "relationTypeID", "scope": "all" }
+			]
+		},
+		{
+			"domain": "appGeneral",
+			"name": "contactRelationType",
+			"class": "ContactRelationType",
+			"table": "PenContactRelationType",
+			"pkey": "ownerID",
+			"sortkey": "id",
+			"fields": [
+				{ "name": "ownerID", "type": "String", "isNull": false },
+				{ "name": "id", "type": "String", "isNull": false },
+				{ "name": "titleFromTo", "type": "String", "isNull": false},
+				{ "name": "titleToFrom", "type": "String", "isNull": false}
 			]
 		}
+
 	],
 	"relations": [
 		{
@@ -39,7 +114,21 @@
 			"finalField": "geoCountries",
 			"finalKey": "geoWorldRegionID",
 			"altIndex": "GeoCountryByGeoWorldRegion"
+		},
+		{
+			"name": "contactRelationSource",
+			"originatingCardinality": "1",
+			"originatingEntity": "contact",
+			"originatingClass": "Contact",
+			"originatingField": "sourceContact",
+			"originatingKey": "id",
+			"finalCardinality": "M",
+			"finalEntity": "contactRelation",
+			"finalClass": "ContactRelation",
+			"finalField": "relatedContacts",
+			"finalKey": "srcContactID",
+			"altIndex": "ContactRelationBySource",
+			"altIndexPkey": "ownerID"
 		}
-
 	]
 }

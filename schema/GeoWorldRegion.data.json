@@ -1,0 +1,9 @@
+{
+	"Items": [
+		{ "id": "1", "code": "NA", "title": "North America" },
+		{ "id": "2", "code": "APAC", "title": "Asia Pacific" },
+		{ "id": "3", "code": "MENA", "title": "Middle-East and North Africa" },
+		{ "id": "4", "code": "LATAM", "title": "Latin America" },
+		{ "id": "5", "code": "EU", "title": "Europe" }
+	]
+}
