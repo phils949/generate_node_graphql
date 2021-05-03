@@ -28,6 +28,7 @@ const ArticleType = new GraphQLObjectType({
         contributor:{
             type: ContributorType,
             resolve(parent,args){
+		//NOTE: This use of "Contributor." uses Mongoose object
                 return Contributor.findById(parent.contributorId)
             }
         }
@@ -44,7 +45,8 @@ const ContributorType = new GraphQLObjectType({
         articles:{
             type: new GraphQLList(ArticleType),
             resolve(parent,args){
-                return Article.find({contributorId:parent.id})
+		//NOTE: This more complex use of Mongoose may need to be refactored. This is a generic find query.  Perhaps we could do a .findByNamedKey. 
+                return Article.findByKey({contributorId:parent.id})
             }
         }
     })

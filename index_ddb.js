@@ -1,28 +1,36 @@
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
-const schema = require('./schema/schema');
+const ddbgoose = require('./ddbgoose');
 
-//TODO: Replace Mongoose with DynamoDB
-//const mongoose = require('mongoose');
+//--- Load config info from .env file into process.env.VARIABLE_NAME_HERE
 require('dotenv').config()
 
+//----> Instantiate Express web server object
 const app = express();
 
-//TODO: Replace Mongoose with DynamoDB
-console.log("Connecting to MongoDB...")
-//mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-//mongoose.connection.once('open', ()=>{
-//    console.log("Connected to MongoDB")
-//	});
+//---> Connect to database
+console.log("Connecting to AWS DynamoDB...")
+global.ddb_connection = new ddbgoose.ddb();   //NOTE: ddb_connection is a global referenced by Models by name
+ddb_connection.connect( process.env.AWS_REGION );
+console.log("Connected to AWS DynamoDB.")
 
+
+//--- Load the code-generated schema.js module
+const schema = require('./schema/schema_ddb');
+
+
+
+//---> Map a /graphql/ endpoint to the Express web server
 app.use(
-    "/graphql",
-    graphqlHTTP({
-    schema: schema,
-    graphiql: true,
+	"/graphql",
+	graphqlHTTP({
+		schema: schema,
+		graphiql: true,
     }));  
 
-const port = 5000;
+
+//---> Launch the Express web server
+const port = process.env.SERVER_PORT;
 app.listen(port, () => {
     console.log(`now listening for requests on port ${port}`);
 	});

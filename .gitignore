@@ -102,3 +102,28 @@ dist
 
 # TernJS port file
 .tern-port
+
+# VIM
+*.swp
+
+# My project
+*.txt
+*_out.js
+
+# Node/NPM
+package-lock.json
+
+
+    .README.md.swp
+#    .config_notes.txt.swp
+#    .gen_dynamo.js.swp
+#    .index_ddb.js.swp
+#    config_notes.txt
+#    models/article_out.js
+#    models/contributor_out.js
+#    models/undefined_out.js
+#    package-lock.json
+#    sav_env
+#    schema/.schema.js.swp
+#    schema/schema_out.js
+#    schema/update.js

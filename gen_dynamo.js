@@ -1,5 +1,5 @@
 const fs = require('fs');
-const config_file = './schema/schema.json';
+const config_file = './schema/schema_ddb.json';
 const schema_file = './schema/schema_ddb.js';
 const model_out_folder = './models/';
 const schema_model_folder = '../models/';
@@ -29,6 +29,7 @@ function findRelation( cfg, entityName ) {
 function gen_entity( cfg, entity ) {
 	var delim = ','
 	var mfields = '';
+	var mkeys = `"${entity.pkey}"`;	//TODO: limitation of 1 key. Consider supporint muliple kyes.
 	var smaArgs = '';
 	var smaFields= '';
 	var tfields = '		id: { type: GraphQLID },\n';
@@ -41,7 +42,7 @@ function gen_entity( cfg, entity ) {
 		if (idx+1 == entity.fields.length) { delim = ''; }
 		if (!(fld.type in oTypes)) { oTypes[fld.type] = `GraphQL${fld.type}`; }
 		typ = `GraphQL${fld.type}`;
-		mfields += `	${fld.name}: ${fld.type}${delim}\n`;
+		mfields += `		${fld.name}: "${fld.type}"${delim}\n`;
 		tfields += `		${fld.name}: { type: ${typ} }${delim}\n`;
 
 		//--- Accumulate field list for Schema Mutation - Add - Args
@@ -50,59 +51,76 @@ function gen_entity( cfg, entity ) {
 		//--- Accumulate field list for Schema Mutation - Add - Resolve-Fields
 		smaFields += `					${fld.name}:args.${fld.name}${delim}\n`;
 
-		//--- Accumulate field list for use in Schema Mutation - Update - Args
-		smuArgs += `\t\t\t\t${fld.name}: { type: new ${typ} }${delim}\n`;
+		if (fld.name != entity.pkey) {
 
-		//--- Accumulate field list for use in Schema Mutation - Update - Set-Fields
-		smuFields += `${fld.name}: args.${fld.name}${delim} `;
+			//--- Accumulate field list for use in Schema Mutation - Update - Args
+			smuArgs += `\t\t\t\t${fld.name}: { type: ${typ} }${delim}\n`;
+
+			//--- Accumulate field list for use in Schema Mutation - Update - Set-Fields
+			smuFields += `${fld.name}: args.${fld.name}${delim} `;
+		}
 
 	});
 
 	//---- Extend schema Object Type fields for relations
 	let rel = findRelation( cfg, entity.name );
 	if (rel !== null) {
-		if (rel.finalEntity == entity.name) {
 
-				//---- Start format ----
-				tfields += `\t\t,${rel.originatingField}:{
-			type: ${rel.originatingClass}Type,
-			resolve(parent,args){
-				return ${rel.originatingClass}.findById(parent.${rel.finalKey})
-			} 
-		}`
-				//---- End format ----
+		//----> Set up parameters based on Originating or Final
+		var funcName, entName, className, fldName, keyName, relType, idxName;
+		idxName = rel.altIndex;
+		if (rel.originatingEntity == entity.name) {
+			otherCardinality = rel.finalCardinality;
+			entName=rel.finalEntity;	//geoCountry
+			className=rel.finalClass;	//GeoCountry
+			fldName=rel.finalField;		//geoCountries
+			otherKey=rel.finalKey;		//geoWorldRegionID
+			thisKey=rel.originatingKey;	//id
+		} else if (rel.finalEntity == entity.name) {
+			otherCardinality = rel.originatingCardinality;
+			entName=rel.originatingEntity;
+			className=rel.originatingClass;
+			fldName=rel.originatingField;
+			otherKey=rel.originatingKey;
+			thisKey=rel.finalKey;
+		}
+		//----> Set up parameters based on Cardinality 1 or M
+		if (otherCardinality == '1') {
+			funcName=`findById(parent.${thisKey}, `;
+			relType = `${className}Type`;
+		} else if (otherCardinality == 'M') {
+			funcName=`findByKey("${idxName}", "${otherKey}", parent.${thisKey}, `;
+			relType = `new GraphQLList(${className}Type)`;
+			console.log(`${entity.name}.${fldName}: type=${relType}`);
+		}
 
-			}
-		} else if (rel.originatingEntity == entity.name) {
-
-				let relType = `${rel.finalClass}Type`;
-				if (rel.finalCardinality == 'M') {
-					relType = `new GraphQLList(${relType})`;
+		//---- Start format ----
+		tfields += `\t\t,${fldName}:{
+				type: ${relType},
+				resolve(parent,args){
+					let ${entName} = new ${className}();
+					return new Promise( (resolve, reject) => {
+						${entName}.${funcName} (err, data) => {
+							if (err != null) { reject( err ); } else { resolve( data ); }
+						});
+					});
 				}
-
-				//---- Start format ----
-				tfields += `\t\t,${rel.finalField}:{
-			type: ${relType},
-			resolve(parent,args){
-				return ${rel.finalClass}.findById({${rel.finalKey}:parent.${rel.originatingKey}})
-			} 
-		}`
-				//---- End format ----
-
-
+			}`;
+		//---- End format ----
 	}
 
 
 	//---- Format the model file text
 	var om = 
-`const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+`const ddbgoose = require('../ddbgoose');
 
-const ${entity.name}Schema = new Schema({
-${mfields}});
-module.exports = mongoose.model('${entity.class}',${entity.name}Schema);	
+const ${entity.name}Schema = {
+	key: [ ${mkeys} ],
+	fields: {
+${mfields}	}
+};
+module.exports = ddbgoose.model(global.ddb_connection, '${entity.class}', '${entity.table}', ${entity.name}Schema);
 `;
-	// (((( TODO: change the mongoose.model() above to ddb.model )))
 
 	//---- Format the schema Object Type
 	let st = `
@@ -123,8 +141,12 @@ ${smaArgs}
 			resolve(parent,args) {
 				let ${entity.name} = new ${entity.class}({
 ${smaFields}
-				})
-				return ${entity.name}.save();
+				});
+				return new Promise( (resolve, reject) => {
+					${entity.name}.save( (err, data) => {
+						if (err != null) { reject(err); } else { resolve( data ); }
+					});
+				});
 			}
 		}`;
 
@@ -140,14 +162,34 @@ ${smuArgs}
 			resolve(parentValue, args) {
 				return new Promise( (resolve, reject) => {
 					//const now = Date().toString();
-					${entity.class}.findOneAndUpdate(
+					let ${entity.name} = new ${entity.class}();
+					${entity.name}.findOneAndUpdate(
 						{${entity.pkey}: args.${entity.pkey}},
-						{"$set": { ${smuFields} }}
-				).exec( (err, res) => {
-						if(err) reject(err)
-						else resolve(res);
-					})
+						{ ${smuFields} },
+						(err, data) => {
+							if (err != null) { reject(err); } else { resolve( data ); }
+						}
+					);
+				});
+			}
+		}`;
 
+	// ---- Format the Mutation functions for the "delete" method
+	//gethere: debug this
+
+	let smDelete =
+`		delete${entity.class}: {
+			type: ${entity.class}Type,
+			args: {id:{type: GraphQLID}},
+			resolve(parentValue, args) {
+				return new Promise( (resolve, reject) => {
+					let ${entity.name} = new ${entity.class}();
+					${entity.name}.deleteById( 
+						${entity.pkey},
+						(err, data) => {
+							if (err != null) { reject(err); } else { resolve( data ); }
+						}
+					);
 				});
 			}
 		}`;
@@ -158,11 +200,20 @@ ${smuArgs}
 			type: ${entity.class}Type,
 			args: {id:{type: GraphQLID}},
 			resolve(parent, args){
-				return ${entity.class}.findById(args.id);
+				let ${entity.name} = new ${entity.class}();
+				return new Promise( (resolve, reject) => {
+					${entity.name}.findById(args.id, (err, data) => {
+						if (err != null) {
+							reject( err );
+						} else {
+							resolve( data );
+						}
+					});
+				});
 			}
 		}`;
 
-	return {'model': om, 'schemaType': st, 'schemaMutations': [smAdd, smUpdate], 'schemaQueries': [sq], 'types': oTypes };
+	return {'model': om, 'schemaType': st, 'schemaMutations': [smAdd, smUpdate, smDelete], 'schemaQueries': [sq], 'types': oTypes };
 }
 
 //-------------------------------------------------
@@ -205,7 +256,7 @@ function process() {
 			data_types[typ] = 1;
 		});
 
-		model_requires += `const ${ent.class} = require('${schema_model_folder}${ent.name}');\n`;
+		model_requires += `const ${ent.class} = require('${schema_model_folder}${ent.name}_ddb');\n`;
 
 	} );
 
@@ -239,7 +290,7 @@ ${s_schema_mutations}
 	}
 });
 
-const RootQuery = newGraphQLObjectType({
+const RootQuery = new GraphQLObjectType({
 	name: 'RootQueryType',
 	fields: {
 		status: {

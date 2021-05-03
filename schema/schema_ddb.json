@@ -1,0 +1,45 @@
+{
+	"entities": [
+		{
+			"name": "geoCountry",
+			"class": "GeoCountry",
+			"table": "GeoCountry",
+			"pkey": "id",
+			"fields": [
+				{ "name": "id", "type": "String", "isNull": false },
+				{ "name": "code", "type": "String", "isNull": false },
+				{ "name": "defaultGeoLanguageID", "type": "String", "isNull": true },
+				{ "name": "geoWorldRegionID", "type": "String", "isNull": true },
+				{ "name": "title", "type": "String", "isNull": false }
+			]
+		},
+		{
+			"name": "geoWorldRegion",
+			"class": "GeoWorldRegion",
+			"table": "geoWorldRegionTable",
+			"pkey": "id",
+			"fields": [
+				{ "name": "id", "type": "String", "isNull": false },
+				{ "name": "code", "type": "String", "isNull": false },
+				{ "name": "title", "type": "String", "isNull": false }
+			]
+		}
+	],
+	"relations": [
+		{
+			"name": "geoWorldRegion2geoCountry",
+			"originatingCardinality": "1",
+			"originatingEntity": "geoWorldRegion",
+			"originatingClass": "GeoWorldRegion",
+			"originatingField": "geoWorldRegion",
+			"originatingKey": "id",
+			"finalCardinality": "M",
+			"finalEntity": "geoCountry",
+			"finalClass": "GeoCountry",
+			"finalField": "geoCountries",
+			"finalKey": "geoWorldRegionID",
+			"altIndex": "GeoCountryByGeoWorldRegion"
+		}
+
+	]
+}
