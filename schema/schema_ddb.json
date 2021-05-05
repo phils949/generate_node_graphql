@@ -6,7 +6,6 @@
 			"class": "GeoCountry",
 			"table": "GeoCountry",
 			"pkey": "id",
-			"sortkey": "code",
 			"fields": [
 				{ "name": "id", "type": "String", "isNull": false },
 				{ "name": "code", "type": "String", "isNull": false },
@@ -26,7 +25,6 @@
 			"class": "GeoWorldRegion",
 			"table": "GeoWorldRegion",
 			"pkey": "id",
-			"sortkey": "code",
 			"fields": [
 				{ "name": "id", "type": "String", "isNull": false },
 				{ "name": "code", "type": "String", "isNull": false },

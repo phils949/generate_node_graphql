@@ -45,13 +45,20 @@ function findEntity( cfg, entityName ) {
 function gen_entity( cfg, entity ) {
 	var delim = ','
 	var mfields = '';
-	var mkeys = `"${entity.pkey}"`;	//TODO: limitation of 1 key. Consider supporint muliple kyes.
 	var smaArgs = '';
 	var smaFields= '';
 	var tfields = '		id: { type: GraphQLID },\n';
 	var smuArgs = `\t\t\t\t${entity.pkey}: {type: new GraphQLNonNull(GraphQLString)}${delim}\n`;
 	var smuFields = '';
 	var oTypes = {};
+	var mkeys = `"${entity.pkey}"`;
+	var smdArgs = `\t\t\t\t${entity.pkey}: {type: GraphQLID}`;
+	if (entity.sortkey !== undefined) {
+		mkeys += `, "${entity.sortkey}"`;
+		smdArgs += `,\n\t\t\t\t${entity.sortkey}: {type: GraphQLString}`;
+	}
+	
+
 	console.log(`inside gen_entity(). name=${entity.name}`);
 	entity.fields.forEach( (fld,idx) => {
 		let typ = '';
@@ -209,8 +216,12 @@ ${smuArgs}
 				return new Promise( (resolve, reject) => {
 					//const now = Date().toString();
 					let ${entity.name} = new ${entity.class}();
-					${entity.name}.findOneAndUpdate(
-						{${entity.pkey}: args.${entity.pkey}},
+					let keyObj = {};
+					keyObj[ "${entity.pkey}" ] = args.${entity.pkey};
+					if (${entity.name}.skey !== undefined) {
+						keyObj[ "${entity.sortkey}" ] = args.${entity.sortkey};
+					}
+					${entity.name}.findOneAndUpdate( keyObj,
 						{ ${smuFields} },
 						(err, data) => {
 							if (err != null) { reject(err); } else { resolve( data ); }
@@ -222,18 +233,24 @@ ${smuArgs}
 
 	// ---- Format the Mutation functions for the "delete" method
 	//gethere: debug this
-
 	let smDelete =
-`		delete${entity.class}: {
+`		delete${entity.class}ById: {
 			type: ${entity.class}GType,
-			args: {id:{type: GraphQLID}},
+			args: {
+${smdArgs}
+			},
 			resolve(parentValue, args) {
 				return new Promise( (resolve, reject) => {
 					let ${entity.name} = new ${entity.class}();
-					${entity.name}.deleteById( 
-						${entity.pkey},
+					let keyObj = {};
+
+					keyObj[ ${entity.name}.pkey ] = args[ ${entity.name}.pkey ];
+					if (${entity.name}.skey !== undefined) {
+						keyObj[ ${entity.name}.skey ] = args[ ${entity.name}.skey ];
+					}
+					${entity.name}.findOneAndDelete( keyObj,
 						(err, data) => {
-							if (err != null) { reject(err); } else { resolve( data ); }
+							if (err != null) { reject(err); } else { resolve( data.Attributes ); }
 						}
 					);
 				});

@@ -118,7 +118,9 @@ sav/*
 *.tar
 *.tgz
 schema/*.js
+schema/*.bak
 models/*.js
+models/*.bak
     .README.md.swp
 #    .config_notes.txt.swp
 #    .gen_dynamo.js.swp

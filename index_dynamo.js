@@ -1,7 +1,5 @@
 //--- Load config info from .env file into process.env.VARIABLE_NAME_HERE
 require('dotenv').config()
-console.log( Object.keys( process.env ) );
-
 
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
