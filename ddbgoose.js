@@ -183,6 +183,46 @@ function model ( ddb, name, table_name, schema ) {
 	}
 
 	//-------------------------------------------------------------
+	// Attach a .findByCompositeKey( idxName, pkeyName, pkeyValue, sortKeyName, sortKeyValue, callback ) method
+	//-------------------------------------------------------------
+	mclass.prototype.findByCompositeKey = function( idxName, pkeyName, pkeyValue, sortKeyName, sortKeyValue, callback ) {
+		//DEBUG: console.log(`${this.name}.findByCompositeKey("${pkeyName}", "${pkeyValue}") called`);
+
+		//---> Set up the Dynamo transaction options
+		var attribs = {};
+		attribs[":pkey_param"] = pkeyValue;
+		attribs[":skey_param"] = sortKeyValue;
+		const params = {
+			TableName: this.table_name,
+			KeyConditionExpression: `${pkeyName} = :pkey_param AND ${sortKeyName} = :skey_param`,
+			ExpressionAttributeValues: attribs
+		};
+		var dynamicFunction;
+		if (idxName != null) {
+			params['IndexName'] = idxName;
+			dynamicFunction = this.ddb.db.getItem;
+		} else {
+			dynamicFunction = this.ddb.db.query;
+		}
+		//console.log(JSON.stringify(params,null,2));
+		//gethere: Should we use alternate functions (getItem vs. query)?
+
+		//---> Call Dynamo to fetch matching records
+		//dynamicFunction( params, function( err, data ) {
+		this.ddb.db.query( params, function( err, data ) {
+			if (err) {
+				const errMsg = `Unable to fetch item. Error JSON: ${JSON.stringify(err, null, 2)}`;
+				//DEBUG: console.error( errMsg );
+				callback( errMsg, null );
+			} else {
+				//DEBUG: console.log( "Item fetched: ", JSON.stringify(data, null, 2));
+				callback( null, data.Items );
+			}
+		});
+	}
+
+
+	//-------------------------------------------------------------
 	// Attach a .findByKey( idxName, keyName, value, callback ) method
 	//-------------------------------------------------------------
 	mclass.prototype.findByKey = function( idxName, keyName, value, callback ) {
@@ -209,6 +249,55 @@ function model ( ddb, name, table_name, schema ) {
 			}
 		});
 	}
+
+	//-------------------------------------------------------------
+	// Attach a .query( args, callback )
+	//	valid args keys:
+	//		idxName - optional
+	//		andPairs - array of dictionaries, each of which contain "name", "comparison", "value".
+	//				each expression will be AND'ed together in a filter expression
+	//				valid comparison values include: eq, ne, gt, ge, lt, le, contains, ncontains
+	//		orPairs - array of dictionaries, each of which contain "name", "comparison", "value"
+	//				each expression will be OR'ed together in a filter expression
+	//				valid comparison values include: eq, ne, gt, ge, lt, le, contains, ncontains
+	//-------------------------------------------------------------
+	//gethere: WIP
+	mclass.prototype.query = function( idxName, pkeyName, pkeyValue, sortKeyName, sortKeyValue, callback ) {
+		//DEBUG: console.log(`${this.name}.findByCompositeKey("${pkeyName}", "${pkeyValue}") called`);
+
+		//---> Set up the Dynamo transaction options
+		var attribs = {};
+		attribs[":pkey_param"] = pkeyValue;
+		attribs[":skey_param"] = sortKeyValue;
+		const params = {
+			TableName: this.table_name,
+			KeyConditionExpression: `${pkeyName} = :pkey_param AND ${sortKeyName} = :skey_param`,
+			ExpressionAttributeValues: attribs
+		};
+		var dynamicFunction;
+		if (idxName != null) {
+			params['IndexName'] = idxName;
+			dynamicFunction = this.ddb.db.getItem;
+		} else {
+			dynamicFunction = this.ddb.db.query;
+		}
+		//console.log(JSON.stringify(params,null,2));
+		//gethere: Should we use alternate functions (getItem vs. query)?
+
+		//---> Call Dynamo to fetch matching records
+		//dynamicFunction( params, function( err, data ) {
+		this.ddb.db.query( params, function( err, data ) {
+			if (err) {
+				const errMsg = `Unable to fetch item. Error JSON: ${JSON.stringify(err, null, 2)}`;
+				//DEBUG: console.error( errMsg );
+				callback( errMsg, null );
+			} else {
+				//DEBUG: console.log( "Item fetched: ", JSON.stringify(data, null, 2));
+				callback( null, data.Items );
+			}
+		});
+	}
+
 
 
 	//-------------------------------------------------------------

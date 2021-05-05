@@ -24,7 +24,7 @@
 			"domain": "common",
 			"name": "geoWorldRegion",
 			"class": "GeoWorldRegion",
-			"table": "geoWorldRegionTable",
+			"table": "GeoWorldRegion",
 			"pkey": "id",
 			"sortkey": "code",
 			"fields": [
@@ -51,6 +51,7 @@
 				{ "name": "middleName", "type": "String", "isNull": true },
 				{ "name": "lastName", "type": "String", "isNull": true },
 				{ "name": "displayName", "type": "String", "isNull": true },
+				{ "name": "gender", "type": "String", "isNull": true },
 				{ "name": "pronouns", "type": "String", "isNull": true },
 				{ "name": "preferredGeoLanguageID", "type": "String", "isNull": true },
 				{ "name": "geoCountryID", "type": "String", "isNull": true }
@@ -59,7 +60,8 @@
 				{ "name": "ContactByLastName", "type": "GSI", "pkey": "ownerID", "sortkey": "lastName", "scope": "all" },
 				{ "name": "ContactByPreferredGeoLanguageID", "type": "GSI", "pkey": "ownerID", "sortkey": "preferredGeoLanguageID", "scope": "all" },
 				{ "name": "ContactByGeoCountry", "type": "GSI", "pkey": "ownerID", "sortkey": "geoCountryID", "scope": "all" }
-			]
+			],
+			"seedFile": "Contact.data.json"
 		},
 		{
 			"domain": "appGeneral",
@@ -73,7 +75,7 @@
 				{ "name": "id", "type": "String", "isNull": false },
 				{ "name": "srcContactID", "type": "String", "isNull": false},
 				{ "name": "dstContactID", "type": "String", "isNull": false},
-				{ "name": "relationTypeID", "type": "String", "isNull": false },
+				{ "name": "contactRelationTypeID", "type": "String", "isNull": false },
 				{ "name": "customType", "type": "String", "isNull": true },
 				{ "name": "tags", "type": "String", "isNull": true },
 				{ "name": "notes", "type": "String", "isNull": true }
@@ -81,8 +83,9 @@
 			"indexes": [
 				{ "name": "ContactRelationBySource", "type": "GSI", "pkey": "ownerID", "sortkey": "srcContactID", "scope": "all" },
 				{ "name": "ContactRelationByDestination", "type": "GSI", "pkey": "ownerID", "sortkey": "dstContactID", "scope": "all" },
-				{ "name": "ContactRelationByRelationType", "type": "GSI", "pkey": "ownerID", "sortkey": "relationTypeID", "scope": "all" }
-			]
+				{ "name": "ContactRelationByRelationType", "type": "GSI", "pkey": "ownerID", "sortkey": "contactRelationTypeID", "scope": "all" }
+			],
+			"seedFile": "ContactRelation.data.json"
 		},
 		{
 			"domain": "appGeneral",
@@ -95,40 +98,127 @@
 				{ "name": "ownerID", "type": "String", "isNull": false },
 				{ "name": "id", "type": "String", "isNull": false },
 				{ "name": "titleFromTo", "type": "String", "isNull": false},
-				{ "name": "titleToFrom", "type": "String", "isNull": false}
-			]
+				{ "name": "titleToFrom", "type": "String", "isNull": false},
+				{ "name": "genderFromTo", "type": "String", "isNull": true},
+				{ "name": "genderToFrom", "type": "String", "isNull": true}
+			],
+			"seedFile": "ContactRelationType.data.json"
+		}
+
+	],
+	"comments": [
+
+
+		"DEBUG: Need to more clearly define relations between compound key tables!",
+		{
+			"name": "made up useless name for the relationship",
+
+			"originatingCardinality": "1 or M",
+			"originatingEntity": "geoWorldRegion",
+			"originatingField": "geoWorldRegion",
+			"originatingPKey": "id",
+			"originatingSKey": "sometimes used",
+
+			"finalCardinality": "M",
+			"finalEntity": "geoCountry",
+			"finalField": "geoCountries",
+			"finalPKey": "geoWorldRegionID",
+			"finalSKey": "sometimes used",
+			"finalIndex": "GeoCountryByGeoWorldRegion",
+
+			"altIndex": "DEPRECATE",
+			"altIndexPkey": "DEPRECATE"
+		},
+
+		{
+			"name": "contactRelationSource",
+
+			"originatingCardinality": "1",
+			"originatingEntity": "contact",
+			"originatingField": "sourceContact",
+			"originatingKey": "DEPRECATE",
+			"originatingPKey": "ownerID",
+			"originatingSKey": "id",
+
+			"finalCardinality": "M",
+			"finalEntity": "contactRelation",
+			"finalField": "relatedToContacts",
+			"finalKey": "DEPRECATE",
+			"finalPKey": "ownerID",
+			"finalSKey": "srcContactID",
+			"finalIndex": "GeoCountryByGeoWorldRegion",
+			"finalIndex": "ContactRelationBySource",
+
+			"altIndex": "DEPRECATE",
+			"altIndexPkey": "DEPRECATE"
 		}
 
 	],
 	"relations": [
 		{
 			"name": "geoWorldRegion2geoCountry",
+
 			"originatingCardinality": "1",
 			"originatingEntity": "geoWorldRegion",
-			"originatingClass": "GeoWorldRegion",
 			"originatingField": "geoWorldRegion",
-			"originatingKey": "id",
+			"originatingPKey": "id",
+
 			"finalCardinality": "M",
 			"finalEntity": "geoCountry",
-			"finalClass": "GeoCountry",
 			"finalField": "geoCountries",
-			"finalKey": "geoWorldRegionID",
+			"finalPKey": "geoWorldRegionID",
+
 			"altIndex": "GeoCountryByGeoWorldRegion"
 		},
 		{
 			"name": "contactRelationSource",
+
 			"originatingCardinality": "1",
 			"originatingEntity": "contact",
-			"originatingClass": "Contact",
 			"originatingField": "sourceContact",
-			"originatingKey": "id",
+			"originatingPKey": "ownerID",
+			"originatingSKey": "id",
+
 			"finalCardinality": "M",
 			"finalEntity": "contactRelation",
-			"finalClass": "ContactRelation",
-			"finalField": "relatedContacts",
-			"finalKey": "srcContactID",
-			"altIndex": "ContactRelationBySource",
-			"altIndexPkey": "ownerID"
+			"finalField": "relatedToContacts",
+			"finalPKey": "ownerID",
+			"finalSKey": "srcContactID",
+
+			"altIndex": "ContactRelationBySource"
+		},
+		{
+			"name": "contactRelationDestination",
+			"originatingCardinality": "1",
+			"originatingEntity": "contact",
+			"originatingField": "destinationContact",
+			"originatingPKey": "ownerID",
+			"originatingSKey": "id",
+
+			"finalCardinality": "M",
+			"finalEntity": "contactRelation",
+			"finalField": "relatedFromContacts",
+			"finalPKey": "ownerID",
+			"finalSKey": "dstContactID",
+
+			"altIndex": "ContactRelationByDestination"
+		},
+
+		{
+			"name": "contactRelationTypeToRelation",
+			"originatingCardinality": "1",
+			"originatingEntity": "contactRelationType",
+			"originatingField": "relationType",
+			"originatingPKey": "ownerID",
+			"originatingSKey": "id",
+
+			"finalCardinality": "M",
+			"finalEntity": "contactRelation",
+			"finalField": "contactRelations",
+			"finalPKey": "ownerID",
+			"finalSKey": "contactRelationTypeID",
+
+			"altIndex": "ContactRelationByRelationType"
 		}
 	]
 }

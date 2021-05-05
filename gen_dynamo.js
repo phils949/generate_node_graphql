@@ -9,14 +9,30 @@ const model_suffix = '_ddb.js';
 //	Search for the named entity through the cfg.relations array
 //-------------------------------------------------
 function findRelation( cfg, entityName ) {
-	let found = null;
+	let found = [];
 	cfg.relations.forEach( (rel, idx) => {
 		if ( rel.originatingEntity == entityName || rel.finalEntity == entityName ) {
-			found = rel;
+			found.push( rel );
 		}
 	});
 	return found;
 }
+
+
+//-------------------------------------------------
+//	Search for the named entity through the cfg.relations array
+//-------------------------------------------------
+function findEntity( cfg, entityName ) {
+	let found = undefined;
+	cfg.entities.forEach( (ent, idx) => {
+		if ( ent.name == entityName || ent.class == entityName ) {
+			found = ent;
+			return;
+		}
+	});
+	return found;
+}
+
 
 //-------------------------------------------------
 // Returns object:
@@ -62,37 +78,63 @@ function gen_entity( cfg, entity ) {
 
 	});
 
-	//---- Extend schema Object Type fields for relations
-	let rel = findRelation( cfg, entity.name );
-	if (rel !== null) {
+	//---- Extend schema Object Type fields for any relations that involve this Entity
+	let foundRel = findRelation( cfg, entity.name );
+	foundRel.forEach( (rel, relidx) => {
 
 		//----> Set up parameters based on Originating or Final
-		var funcName, entName, className, fldName, keyName, relType, idxName;
+		var funcName, entName, className, fldName, keyName, relType, idxName, idxKey, dataReturn, funcName;
 		idxName = rel.altIndex;
+		idxKey = rel.altIndexPkey;
 		if (rel.originatingEntity == entity.name) {
 			otherCardinality = rel.finalCardinality;
 			entName=rel.finalEntity;	//geoCountry
-			className=rel.finalClass;	//GeoCountry
+			otherEnt = findEntity( cfg, entName );
+			className=otherEnt.class;	//GeoCountry
 			fldName=rel.finalField;		//geoCountries
-			otherKey=rel.finalKey;		//geoWorldRegionID
-			thisKey=rel.originatingKey;	//id
+			thisPKey=rel.originatingPKey;	//id
+			thisSKey=rel.originatingSKey;	//code
+			otherPKey=rel.finalPKey;		//geoWorldRegionID
+			otherSKey=rel.finalSKey;		//code
+
 		} else if (rel.finalEntity == entity.name) {
 			otherCardinality = rel.originatingCardinality;
 			entName=rel.originatingEntity;
-			className=rel.originatingClass;
+			otherEnt = findEntity( cfg, entName );
+			className=otherEnt.class;
 			fldName=rel.originatingField;
-			otherKey=rel.originatingKey;
-			thisKey=rel.finalKey;
+			thisPKey=rel.finalPKey;
+			thisSKey=rel.finalSKey;
+			otherPKey=rel.originatingPKey;
+			otherSKey=rel.originatingSKey;
 		}
 		//----> Set up parameters based on Cardinality 1 or M
 		if (otherCardinality == '1') {
-			funcName=`findById(parent.${thisKey}, `;
-			relType = `${className}Type`;
+			relType = `${className}GType`;
+			if (otherSKey === undefined) {
+				funcName=`findById(parent.${thisPKey}, `;
+				dataReturn="data";
+			} else {
+				funcName=`findByCompositeKey(null, "${otherPKey}", parent.${thisPKey}, "${otherSKey}", parent.${thisSKey}, `;
+				dataReturn="data[0]";
+			}
+
+
 		} else if (otherCardinality == 'M') {
-			funcName=`findByKey("${idxName}", "${otherKey}", parent.${thisKey}, `;
-			relType = `new GraphQLList(${className}Type)`;
-			console.log(`${entity.name}.${fldName}: type=${relType}`);
+			relType = `new GraphQLList(${className}GType)`;
+			if (otherSKey === undefined) {
+				funcName=`findByKey("${idxName}", "${otherPKey}", parent.${thisPKey}, `;
+				dataReturn="data";
+			} else {
+				funcName=`findByCompositeKey("${idxName}", "${otherPKey}", parent.${thisPKey}, "${otherSKey}", parent.${thisSKey}, `;
+				dataReturn="data";
+			}
+			//console.log(`${entity.name}.${fldName}: type=${relType}`);
 		}
+		if (entity.name == "contactRelation") {
+			console.log( `DEBUG CONTACT: \n\tfunName=${funcName}\n\trelType=${relType}\n\totherCardinality=${otherCardinality}\n\tidxName=${idxName}\n\totherPKey=${otherPKey}\n\totherSKey=${otherSKey}\n\tthisPKey=${thisPKey}\n\tthisSKey=${thisSKey}\n` );
+		}
+
 
 		//---- Start format ----
 		tfields += `\t\t,${fldName}:{
@@ -101,13 +143,19 @@ function gen_entity( cfg, entity ) {
 					let ${entName} = new ${className}();
 					return new Promise( (resolve, reject) => {
 						${entName}.${funcName} (err, data) => {
-							if (err != null) { reject( err ); } else { resolve( data ); }
+							if (err != null) { 
+								console.log("${fldName} resolver querying ${entName} object threw error:", JSON.stringify(err,null,2));
+								reject( err ); 
+							} else { 
+								console.log("${fldName} resolver querying ${entName} object returned data:", JSON.stringify(data,null,2));
+								resolve( ${dataReturn} ); 
+							}
 						});
 					});
 				}
-			}`;
+			}\n`;
 		//---- End format ----
-	}
+	});
 
 
 	//---- Format the model file text
@@ -124,7 +172,7 @@ module.exports = ddbgoose.model(global.ddb_connection, '${entity.class}', '${ent
 
 	//---- Format the schema Object Type
 	let st = `
-const ${entity.class}Type = new GraphQLObjectType({
+const ${entity.class}GType = new GraphQLObjectType({
 	name: '${entity.class}',
 	fields: ( ) => ({
 ${tfields}
@@ -134,7 +182,7 @@ ${tfields}
 	//---- Format the Mutation functions for "add" method
 	let smAdd = 
 `		add${entity.class}: {
-			type: ${entity.class}Type,
+			type: ${entity.class}GType,
 			args: {
 ${smaArgs}
 			},
@@ -151,11 +199,9 @@ ${smaFields}
 		}`;
 
 	// ---- Format the Mutation functions for the "update" method
-	//gethere: debug this
-
 	let smUpdate =
 `		update${entity.class}: {
-			type: ${entity.class}Type,
+			type: ${entity.class}GType,
 			args: {
 ${smuArgs}
 			},
@@ -179,7 +225,7 @@ ${smuArgs}
 
 	let smDelete =
 `		delete${entity.class}: {
-			type: ${entity.class}Type,
+			type: ${entity.class}GType,
 			args: {id:{type: GraphQLID}},
 			resolve(parentValue, args) {
 				return new Promise( (resolve, reject) => {
@@ -194,16 +240,18 @@ ${smuArgs}
 			}
 		}`;
 
-	//---- Format the Query functions
-	let sq = 
-`		${entity.name}: {
-			type: ${entity.class}Type,
-			args: {id:{type: GraphQLID}},
+	//----> Generate the <ENTITY>ById(id) Query function
+	let sq = [];
+	sq.push(
+`		${entity.name}ById: {
+			type: ${entity.class}GType,
+			args: {${entity.pkey}:{type: GraphQLID}},
 			resolve(parent, args){
 				let ${entity.name} = new ${entity.class}();
 				return new Promise( (resolve, reject) => {
-					${entity.name}.findById(args.id, (err, data) => {
+					${entity.name}.findById(args.${entity.pkey}, (err, data) => {
 						if (err != null) {
+							console.error("${entity.name} resolver querying object threw error:", JSON.stringify(err,null,2));
 							reject( err );
 						} else {
 							resolve( data );
@@ -211,9 +259,31 @@ ${smuArgs}
 					});
 				});
 			}
-		}`;
+		}`);
 
-	return {'model': om, 'schemaType': st, 'schemaMutations': [smAdd, smUpdate, smDelete], 'schemaQueries': [sq], 'types': oTypes };
+
+	//----> Generate the <ENTITY>ByKeys(pkey, skey) Query Function
+	if (entity.sortkey !== undefined) {
+		sq.push(
+`		${entity.name}ByKeys: {
+			type: ${entity.class}GType,
+			args: {${entity.pkey}:{type: GraphQLID}, ${entity.sortkey}:{type: GraphQLString}},
+			resolve(parent, args){
+				let ${entity.name} = new ${entity.class}();
+				return new Promise( (resolve, reject) => {
+					${entity.name}.findByCompositeKey(null, "${entity.pkey}", args.${entity.pkey}, "${entity.sortkey}", args.${entity.sortkey}, (err, data) => {
+						if (err != null) {
+							reject( err );
+						} else {
+							resolve( data[0] );
+						}
+					});
+				});
+			}
+		}`);
+	}
+
+	return {'model': om, 'schemaType': st, 'schemaMutations': [smAdd, smUpdate, smDelete], 'schemaQueries': sq, 'types': oTypes };
 }
 
 //-------------------------------------------------
@@ -291,7 +361,7 @@ ${s_schema_mutations}
 });
 
 const RootQuery = new GraphQLObjectType({
-	name: 'RootQueryType',
+	name: 'RootQueryGType',
 	fields: {
 		status: {
 			type: GraphQLString,

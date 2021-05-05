@@ -27,7 +27,9 @@ async function process_data( cfg, data_folder, docCli ) {
 		if (ent.seedFile === undefined) {
 			return;
 		}
+		console.log(`Loading seed JSON data from seedFile: ${ent.seedFile}`);
 		let data = load_json( data_folder + ent.seedFile );
+		console.log('...JSON loaded');
 		data.Items.forEach( (recordObj, idx2) => {
 			let params = {
 				TableName: ent.table,
@@ -41,6 +43,7 @@ async function process_data( cfg, data_folder, docCli ) {
 			});
 		});
 		
+		console.log('...data writes submitted.');
 	});
 };
 

@@ -1,0 +1,108 @@
+{
+	"Items": [
+
+		{ "ownerID": "1", "id": "mother_daughter", "titleFromTo": "mother", "titleToFrom": "daughter", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "mother_son", "titleFromTo": "mother", "titleToFrom": "son", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "mother_daughter_inLaw", "titleFromTo": "mother in law", "titleToFrom": "daughter in law", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "mother_son_inLaw", "titleFromTo": "mother in law", "titleToFrom": "son in law", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "mother_daughter_step", "titleFromTo": "step-mother", "titleToFrom": "step-daughter", "genderFromTo": "F", "genderToFrom": "F" },
+
+		{ "ownerID": "1", "id": "mother_son_step", "titleFromTo": "step-mother", "titleToFrom": "step-son", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "mother_daughter_inLaw_step", "titleFromTo": "step-mother in law", "titleToFrom": "step-daughter in law", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "mother_son_inLaw_step", "titleFromTo": "step-mother in law", "titleToFrom": "step-son in law", "genderFromTo": "F", "genderToFrom": "M" },
+
+
+
+
+		{ "ownerID": "1", "id": "daughter_mother", "titleFromTo": "daughter", "titleToFrom": "mother", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "son_mother", "titleFromTo": "son", "titleToFrom": "mother", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "daughter_mother_inLaw", "titleFromTo": "daughter in law", "titleToFrom": "mother in law", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "son_mother_inLaw", "titleFromTo": "son in law", "titleToFrom": "mother in law", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "daughter_mother_step", "titleFromTo": "step-daughter", "titleToFrom": "step-mother", "genderFromTo": "F", "genderToFrom": "F" },
+
+		{ "ownerID": "1", "id": "son_mother_step", "titleFromTo": "step-son", "titleToFrom": "step-mother", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "daughter_mother_inLaw_step", "titleFromTo": "step-daughter in law", "titleToFrom": "step-mother in law", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "son_mother_inLaw_step", "titleFromTo": "step-son in law", "titleToFrom": "step-mother in law", "genderFromTo": "M", "genderToFrom": "F" },
+
+
+		{ "ownerID": "1", "id": "father_daughter", "titleFromTo": "father", "titleToFrom": "daughter", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "father_son", "titleFromTo": "father", "titleToFrom": "son", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "father_daughter_inLaw", "titleFromTo": "father in law", "titleToFrom": "daughter in law", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "father_son_inLaw", "titleFromTo": "father in law", "titleToFrom": "son in law", "genderFromTo": "M", "genderToFrom": "M" },
+
+		{ "ownerID": "1", "id": "father_daughter_step", "titleFromTo": "step-father", "titleToFrom": "step-daughter", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "father_son_step", "titleFromTo": "step-father", "titleToFrom": "step-son", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "father_daughter_inLaw_step", "titleFromTo": "step-father in law", "titleToFrom": "step-daughter in law", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "father_son_inLaw_step", "titleFromTo": "step-father in law", "titleToFrom": "step-son in law", "genderFromTo": "M", "genderToFrom": "M" },
+
+		{ "ownerID": "1", "id": "daughter_father", "titleFromTo": "daughter", "titleToFrom": "father", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "son_father", "titleFromTo": "son", "titleToFrom": "father", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "daughter_father_inLaw", "titleFromTo": "daughter in law", "titleToFrom": "father in law", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "son_father_inLaw", "titleFromTo": "son in law", "titleToFrom": "father in law", "genderFromTo": "M", "genderToFrom": "M" },
+
+		{ "ownerID": "1", "id": "daughter_father_step", "titleFromTo": "step-daughter", "titleToFrom": "step-father", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "son_father_step", "titleFromTo": "step-son", "titleToFrom": "step-father", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "daughter_father_inLaw_step", "titleFromTo": "step-daughter in law", "titleToFrom": "step-father in law", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "son_father_inLaw_step", "titleFromTo": "step-son in law", "titleToFrom": "step-father in law", "genderFromTo": "M", "genderToFrom": "M" },
+
+
+
+		{ "ownerID": "1", "id": "father_son_grand", "titleFromTo": "grandfather", "titleToFrom": "grandson", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "father_daughter_grand", "titleFromTo": "grandfather", "titleToFrom": "granddaughter", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "father_son_great_grand", "titleFromTo": "great-grandfather", "titleToFrom": "great-grandson", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "father_daughter_great_grand", "titleFromTo": "great-grandfather", "titleToFrom": "great-granddaughter", "genderFromTo": "M", "genderToFrom": "F" },
+
+
+		{ "ownerID": "1", "id": "mother_son_grand", "titleFromTo": "grandmother", "titleToFrom": "grandson", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "mother_daughter_grand", "titleFromTo": "grandmother", "titleToFrom": "granddaughter", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "mother_son_great_grand", "titleFromTo": "great-grandmother", "titleToFrom": "great-grandson", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "mother_daughter_great_grand", "titleFromTo": "great-grandmother", "titleToFrom": "great-granddaughter", "genderFromTo": "M", "genderToFrom": "F" },
+
+
+		{ "ownerID": "1", "id": "husband_wife", "titleFromTo": "husband", "titleToFrom": "wife", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "husband_wife_ex", "titleFromTo": "ex-husband", "titleToFrom": "ex-wife", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "wife_husband", "titleFromTo": "wife", "titleToFrom": "husband", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "wife_husband_ex", "titleFromTo": "ex-wife", "titleToFrom": "ex-husband", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "spouse_spouse", "titleFromTo": "spouse", "titleToFrom": "spouse", "genderFromTo": "N", "genderToFrom": "N" },
+		{ "ownerID": "1", "id": "spouse_spouse_ex", "titleFromTo": "ex-spouse", "titleToFrom": "ex-spouse" },
+		{ "ownerID": "1", "id": "fiance_fiance", "titleFromTo": "fiance", "titleToFrom": "fiance" },
+		{ "ownerID": "1", "id": "fiance_fiance_ex", "titleFromTo": "ex-fiance", "titleToFrom": "ex-fiance" },
+
+
+		{ "ownerID": "1", "id": "brother_brother", "titleFromTo": "brother", "titleToFrom": "brother", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "brother_brother_step", "titleFromTo": "step-brother", "titleToFrom": "step-brother", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "brother_brother_half", "titleFromTo": "half-brother", "titleToFrom": "half-brother", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "brother_brother_inLaw", "titleFromTo": "brother in law", "titleToFrom": "brother in law", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "brother_sister", "titleFromTo": "brother", "titleToFrom": "sister", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "brother_sister_half", "titleFromTo": "half-brother", "titleToFrom": "half-sister", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "brother_sister_step", "titleFromTo": "step-brother", "titleToFrom": "step-sister", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "brother_sister_inLaw", "titleFromTo": "brother in law", "titleToFrom": "sister in law", "genderFromTo": "M", "genderToFrom": "F" },
+
+		{ "ownerID": "1", "id": "sister_brother", "titleFromTo": "sister", "titleToFrom": "brother", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "sister_brother_step", "titleFromTo": "step-sister", "titleToFrom": "step-brother", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "sister_brother_half", "titleFromTo": "half-sister", "titleToFrom": "hafl-brother", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "sister_brother_inLaw", "titleFromTo": "sister in law", "titleToFrom": "brother in law", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "sister_sister", "titleFromTo": "sister", "titleToFrom": "sister", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "sister_sister_step", "titleFromTo": "step-sister", "titleToFrom": "step-sister", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "sister_sister_half", "titleFromTo": "half-sister", "titleToFrom": "half-sister", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "sister_sister_inLaw", "titleFromTo": "sister in law", "titleToFrom": "sister in law", "genderFromTo": "F", "genderToFrom": "F" },
+
+
+		{ "ownerID": "1", "id": "girlfriend_boyfriend", "titleFromTo": "girlfriend", "titleToFrom": "boyfriend", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "girlfriend_boyfriend_ex", "titleFromTo": "ex-girlfriend", "titleToFrom": "ex-boyfriend", "genderFromTo": "F", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "boyfriend_girlfriend", "titleFromTo": "boyfriend", "titleToFrom": "girlfriend", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "boyfriend_girlfriend_ex", "titleFromTo": "ex-boyfriend", "titleToFrom": "ex-girlfriend", "genderFromTo": "M", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "girlfriend_girlfriend", "titleFromTo": "girlfriend", "titleToFrom": "ex-girlfriend", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "girlfriend_girlfriend_ex", "titleFromTo": "ex-girlfriend", "titleToFrom": "ex-girlfriend", "genderFromTo": "F", "genderToFrom": "F" },
+		{ "ownerID": "1", "id": "boyfriend_boyfriend", "titleFromTo": "boyfriend", "titleToFrom": "boyfriend", "genderFromTo": "M", "genderToFrom": "M" },
+		{ "ownerID": "1", "id": "boyfriend_boyfriend_ex", "titleFromTo": "ex-boyfriend", "titleToFrom": "ex-boyfriend", "genderFromTo": "M", "genderToFrom": "M" },
+
+		{ "ownerID": "1", "id": "employee_manager", "titleFromTo": "employee", "titleToFrom": "manager" },
+		{ "ownerID": "1", "id": "employee_manager_ex", "titleFromTo": "ex-employee", "titleToFrom": "ex-manager" },
+		{ "ownerID": "1", "id": "manager_employee", "titleFromTo": "manager", "titleToFrom": "employee" },
+		{ "ownerID": "1", "id": "manager_employee_ex", "titleFromTo": "ex-manager", "titleToFrom": "ex-employee" },
+		{ "ownerID": "1", "id": "co-worker_co-worker", "titleFromTo": "co-worker", "titleToFrom": "co-worker" },
+		{ "ownerID": "1", "id": "co-worker_co-worker_former", "titleFromTo": "former co-worker", "titleToFrom": "former co-worker" }
+
+	]
+}

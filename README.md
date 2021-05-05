@@ -23,6 +23,7 @@ Example AWS DDB version of .env file:
 	AWS_REGION=us-east-1
 	AWS_ACCESS_KEY_ID=AAAABBBB44444ZZZZYYY
 	AWS_SECRET_ACCESS_KEY=aaabbb5555zzzz888aaa022fffffff22222zzzz
+	DROP_SCHEMA=Y
 
 ## How To Define a Schema
 
@@ -81,7 +82,34 @@ The Many-to-Many relation is not supported, as it would require generation of a 
 intersection table and entity.  If you must implement a many-to-many relation, you will
 need to create your own intermediate intersetion entity to map TABLE1 (1:M) INTERSECTION (M:1) TABLE2.
 
-## How to run the code generator (to Generate the Schema/Model Code)
+## How to create DynamoDB tables and indexes automatically
+
+Once the schema/schema_ddb.json file has been created, you can run the following utility script to create DynamoDB tables and indexes.
+
+	node gen_ddb_database.js
+
+This will look at the ".env" file setting called "DROP_SCHEMA=Y|N" to determine whether or not the script will attempt to drop tables before recreating them.  If "N", it will only create tables that do not already exist.  If "Y", it will drop each table, wait until the table is dropped, and then re-create the tables.
+
+
+## How to load seed data into DynamoDB tables automatically
+
+In the schema/schema_ddb.json file, within each Entity definition, an optional attribute named "seedFile" can specify a json datq file (that should live within the schema/ folder) to be loaded into the DynamoDB table.
+
+The format of a seed file is:
+
+	{
+		Items: [
+			{ "id": "111", "field1": "value1.1", "field2": "value2.1" },
+			{ "id": "222", "field1": "value1.2", "field2": "value2.2" },
+			{ "id": "333", "field1": "value1.3", "field2": "value2.3" },
+			{ "id": "333", "field1": "value1.4", "field2": "value2.4" }
+		]
+	}
+
+Once the schema/schema_ddb.json file has one or more seed files defined for entities, run the loader script as follows:
+	node load_seed_data_dynamo.js
+
+## How to run the code generator (to Generate the Schema/Model Code for a GraphQL Server)
 
 After having defined the schema structure in the ./schema/schema.json file,
 run the appropriate code generator:
